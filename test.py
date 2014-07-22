@@ -1,12 +1,18 @@
 from nose.tools import eq_
 from ordered_set import OrderedSet
+import pickle
 
 
 def test_pickle():
-    import pickle
     set1 = OrderedSet('abracadabra')
     roundtrip = pickle.loads(pickle.dumps(set1))
     assert roundtrip == set1
+
+
+def test_empty_pickle():
+    empty_oset = OrderedSet()
+    empty_roundtrip = pickle.loads(pickle.dumps(empty_oset))
+    assert empty_roundtrip == empty_oset
 
 
 def test_order():
@@ -35,4 +41,11 @@ def test_indexing():
 
     eq_(set1[[1, 2]], OrderedSet(['b', 'r']))
     eq_(set1[1:3], OrderedSet(['b', 'r']))
+    eq_(set1.index('b'), 1)
+    eq_(set1.index(('b', 'r')), [1, 2])
+    try:
+        set1.index('br')
+        assert False, "Looking up a nonexistent key should be a KeyError"
+    except KeyError:
+        pass
 
